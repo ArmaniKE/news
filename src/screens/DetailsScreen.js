@@ -1,7 +1,19 @@
 import { View, Text, Image, StyleSheet, Button, Linking } from "react-native";
+import { useFavorites } from "../context/FavoritesContext";
 
-const DetailsScreen = ({ route }) => {
+const DetailsScreen = ({ route, navigation }) => {
   const { article } = route.params;
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+
+  const isFavorite = favorites.some((item) => item.id === article.id);
+
+  const toggleFavorite = () => {
+    if (isFavorite) {
+      removeFavorite(article.id);
+    } else {
+      addFavorite(article);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -10,6 +22,12 @@ const DetailsScreen = ({ route }) => {
       )}
       <Text style={styles.title}>{article.title}</Text>
       <Text style={styles.desc}>{article.description}</Text>
+
+      <Button
+        title={isFavorite ? "Удалить из избранного" : "Добавить в избранное"}
+        onPress={toggleFavorite}
+      />
+
       <Button
         title="Открыть источник"
         onPress={() => Linking.openURL(article.url)}
